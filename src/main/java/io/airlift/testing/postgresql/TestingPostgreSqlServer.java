@@ -13,7 +13,6 @@
  */
 package io.airlift.testing.postgresql;
 
-import com.nesscomputing.db.postgres.embedded.EmbeddedPostgreSQL;
 import io.airlift.log.Logger;
 
 import java.io.Closeable;
@@ -33,7 +32,7 @@ public final class TestingPostgreSqlServer
     private final String user;
     private final String database;
     private final int port;
-    private final EmbeddedPostgreSQL server;
+    private final EmbeddedPostgreSql server;
 
     public TestingPostgreSqlServer(String user, String database)
             throws Exception
@@ -41,10 +40,10 @@ public final class TestingPostgreSqlServer
         this.user = checkNotNull(user, "user is null");
         this.database = checkNotNull(database, "database is null");
 
-        server = EmbeddedPostgreSQL.builder().start();
+        server = new EmbeddedPostgreSql();
         port = server.getPort();
 
-        try (Connection connection = server.getPostgresDatabase().getConnection()) {
+        try (Connection connection = server.getPostgresDatabase()) {
             try (Statement statement = connection.createStatement()) {
                 execute(statement, format("CREATE ROLE %s WITH LOGIN", user));
                 execute(statement, format("CREATE DATABASE %s OWNER %s ENCODING = 'utf8'", database, user));
