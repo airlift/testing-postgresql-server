@@ -122,7 +122,9 @@ final class EmbeddedPostgreSql
         }
         catch (Exception e) {
             log.error("could not stop postmaster in %s" + serverDirectory.toString(), e);
-            postmaster.destroy();
+            if (postmaster != null) {
+                postmaster.destroy();
+            }
         }
 
         deleteRecursively(serverDirectory.toAbsolutePath().toFile());
@@ -176,12 +178,12 @@ final class EmbeddedPostgreSql
 
         log.info("postmaster started on port %s. Waiting up to %s for startup to finish.", port, PG_STARTUP_WAIT);
 
-        waitForServerStartup();
+        waitForServerStartup(process);
 
         return process;
     }
 
-    private void waitForServerStartup()
+    private void waitForServerStartup(Process process)
             throws IOException
     {
         Throwable lastCause = null;
@@ -199,7 +201,7 @@ final class EmbeddedPostgreSql
 
             try {
                 // check if process has exited
-                int value = postmaster.exitValue();
+                int value = process.exitValue();
                 throw new IOException(format("postmaster exited with value %d, check stdout for more detail", value));
             }
             catch (IllegalThreadStateException ignored) {
