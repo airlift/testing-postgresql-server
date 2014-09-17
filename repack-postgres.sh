@@ -7,6 +7,18 @@
 VERSION=9.3.5-1
 BASEURL="http://get.enterprisedb.com/postgresql"
 
+TAR=tar
+test -x /usr/local/bin/gtar && TAR=/usr/local/bin/gtar
+
+$TAR --version | grep -q "GNU tar"
+if [ $? -ne 0  ]
+then
+    echo "GNU tar is required."
+    echo "Hint: brew install gnu-tar"
+    $TAR --version
+    exit 100
+fi
+
 cd $(dirname $0)
 
 RESOURCES=target/generated-resources
@@ -25,7 +37,7 @@ test -e $OSX_DIST || curl -o $OSX_DIST "$BASEURL/$OSX_NAME"
 PACKDIR=$(mktemp -d "${TMPDIR:-/tmp}/pg.XXXXXXXXXX")
 tar -xzf $LINUX_DIST -C $PACKDIR
 pushd $PACKDIR/pgsql
-tar -czf $OLDPWD/$RESOURCES/postgresql-Linux-amd64.tar.gz \
+$TAR -czf $OLDPWD/$RESOURCES/postgresql-Linux-amd64.tar.gz \
   share/postgresql \
   lib \
   bin/initdb \
@@ -37,7 +49,7 @@ rm -rf $PACKDIR
 PACKDIR=$(mktemp -d "${TMPDIR:-/tmp}/pg.XXXXXXXXXX")
 unzip -q -d $PACKDIR $OSX_DIST
 pushd $PACKDIR/pgsql
-tar -czf $OLDPWD/$RESOURCES/postgresql-Mac_OS_X-x86_64.tar.gz \
+$TAR -czf $OLDPWD/$RESOURCES/postgresql-Mac_OS_X-x86_64.tar.gz \
   share/postgresql \
   lib/libiconv.2.dylib \
   lib/libxml2.2.dylib \
