@@ -16,6 +16,8 @@ package io.airlift.testing.postgresql;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import io.airlift.command.Command;
+import io.airlift.command.CommandFailedException;
 import io.airlift.log.Logger;
 import io.airlift.units.Duration;
 
@@ -23,7 +25,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Path;
@@ -36,20 +37,19 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.StandardSystemProperty.OS_ARCH;
 import static com.google.common.base.StandardSystemProperty.OS_NAME;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.io.ByteStreams.toByteArray;
-import static com.google.common.io.CharStreams.readLines;
+import static io.airlift.concurrent.Threads.daemonThreadsNamed;
 import static io.airlift.testing.FileUtils.deleteRecursively;
 import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Files.createTempDirectory;
-import static java.util.Arrays.asList;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 
 // forked from https://github.com/opentable/otj-pg-embedded
 final class EmbeddedPostgreSql
@@ -61,7 +61,9 @@ final class EmbeddedPostgreSql
 
     private static final String PG_SUPERUSER = "postgres";
     private static final Duration PG_STARTUP_WAIT = new Duration(10, TimeUnit.SECONDS);
+    private static final Duration COMMAND_TIMEOUT = new Duration(5, TimeUnit.SECONDS);
 
+    private final ExecutorService executor = newCachedThreadPool(daemonThreadsNamed("testing-postgresql-server-%s"));
     private final Path serverDirectory;
     private final Path dataDirectory;
     private final int port = randomPort();
@@ -128,6 +130,8 @@ final class EmbeddedPostgreSql
         }
 
         deleteRecursively(serverDirectory.toAbsolutePath().toFile());
+
+        executor.shutdownNow();
     }
 
     @Override
@@ -254,27 +258,20 @@ final class EmbeddedPostgreSql
         return serverDirectory.resolve("bin").resolve(binaryName).toString();
     }
 
-    private static List<String> system(String... command)
+    private String system(String... command)
     {
         try {
-            Process process = new ProcessBuilder(command).start();
-            if (process.waitFor() != 0) {
-                String output = new String(toByteArray(process.getInputStream()), UTF_8);
-                String error = new String(toByteArray(process.getErrorStream()), UTF_8);
-                throw new RuntimeException(format("process failed: %s%n%s%n%s", asList(command), output, error));
-            }
-            return readLines(new InputStreamReader(process.getInputStream(), UTF_8));
+            return new Command(command)
+                    .setTimeLimit(COMMAND_TIMEOUT)
+                    .execute(executor)
+                    .getCommandOutput();
         }
-        catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        catch (CommandFailedException e) {
             throw Throwables.propagate(e);
         }
     }
 
-    private static void unpackPostgres(Path target)
+    private void unpackPostgres(Path target)
             throws IOException
     {
         String archiveName = format("/postgresql-%s.tar.gz", getPlatform());
