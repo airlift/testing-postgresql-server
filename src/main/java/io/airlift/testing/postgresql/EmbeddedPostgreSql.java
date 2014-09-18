@@ -61,7 +61,7 @@ final class EmbeddedPostgreSql
 
     private static final String PG_SUPERUSER = "postgres";
     private static final Duration PG_STARTUP_WAIT = new Duration(10, TimeUnit.SECONDS);
-    private static final Duration COMMAND_TIMEOUT = new Duration(5, TimeUnit.SECONDS);
+    private static final Duration COMMAND_TIMEOUT = new Duration(30, TimeUnit.SECONDS);
 
     private final ExecutorService executor = newCachedThreadPool(daemonThreadsNamed("testing-postgresql-server-%s"));
     private final Path serverDirectory;
