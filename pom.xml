@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>testing-postgresql-server</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <packaging>jar</packaging>
 
     <name>testing-postgresql-server</name>
@@ -20,7 +20,7 @@
     <scm>
         <connection>scm:git:git@github.com/airlift/airbase.git</connection>
         <url>https://github.com/airlift/testing-postgresql-server</url>
-        <tag>HEAD</tag>
+        <tag>0.3</tag>
     </scm>
 
     <properties>
