@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.airlift</groupId>
         <artifactId>airbase</artifactId>
-        <version>27</version>
+        <version>60</version>
     </parent>
 
     <artifactId>testing-postgresql-server</artifactId>
@@ -24,7 +24,9 @@
     </scm>
 
     <properties>
+        <air.check.skip-findbugs>true</air.check.skip-findbugs>
         <air.check.skip-pmd>true</air.check.skip-pmd>
+        <air.check.skip-jacoco>true</air.check.skip-jacoco>
 
         <dep.airlift.version>0.94</dep.airlift.version>
     </properties>
@@ -91,7 +93,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.3.2</version>
+                <version>1.5.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>

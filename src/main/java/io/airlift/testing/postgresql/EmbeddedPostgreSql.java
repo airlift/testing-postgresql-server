@@ -13,8 +13,6 @@
  */
 package io.airlift.testing.postgresql;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.airlift.command.Command;
 import io.airlift.command.CommandFailedException;
@@ -41,6 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.StandardSystemProperty.OS_ARCH;
 import static com.google.common.base.StandardSystemProperty.OS_NAME;
 import static com.google.common.collect.Lists.newArrayList;
@@ -137,7 +136,7 @@ final class EmbeddedPostgreSql
     @Override
     public String toString()
     {
-        return Objects.toStringHelper(this)
+        return toStringHelper(this)
                 .add("serverDirectory", serverDirectory)
                 .add("port", port)
                 .toString();
@@ -267,7 +266,7 @@ final class EmbeddedPostgreSql
                     .getCommandOutput();
         }
         catch (CommandFailedException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 
