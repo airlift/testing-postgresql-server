@@ -79,13 +79,13 @@ final class EmbeddedPostgreSql
         postgresConfig = ImmutableMap.<String, String>builder()
                 .put("timezone", "UTC")
                 .put("synchronous_commit", "off")
-                .put("checkpoint_segments", "64")
                 .put("max_connections", "300")
                 .build();
 
         try {
             unpackPostgres(serverDirectory);
 
+            pgVersion();
             initdb();
             postmaster = startPostmaster();
         }
@@ -148,6 +148,11 @@ final class EmbeddedPostgreSql
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
         }
+    }
+
+    private void pgVersion()
+    {
+        log.info(system(pgBin("postgres"), "-V").trim());
     }
 
     private void initdb()

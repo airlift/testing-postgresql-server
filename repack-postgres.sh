@@ -4,10 +4,10 @@ set -eu
 
 # forked from https://github.com/opentable/otj-pg-embedded
 
-# http://www.enterprisedb.com/products-services-training/pgbindownload
+# https://www.enterprisedb.com/products-services-training/pgbindownload
 
-VERSION=9.3.5-1
-BASEURL="http://get.enterprisedb.com/postgresql"
+VERSION=9.6.1-1
+BASEURL="https://get.enterprisedb.com/postgresql"
 
 TAR=tar
 test -x /usr/local/bin/gtar && TAR=/usr/local/bin/gtar
@@ -58,7 +58,7 @@ $TAR -czf $OLDPWD/$RESOURCES/postgresql-Mac_OS_X-x86_64.tar.gz \
   lib/libxml2.2.dylib \
   lib/libssl.1.0.0.dylib \
   lib/libcrypto.1.0.0.dylib \
-  lib/libuuid.16.dylib \
+  lib/libuuid.1.1.dylib \
   lib/postgresql/*.so \
   bin/initdb \
   bin/pg_ctl \
