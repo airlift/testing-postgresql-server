@@ -1,4 +1,6 @@
-#!/bin/bash -eux
+#!/bin/bash
+
+set -eu
 
 # forked from https://github.com/opentable/otj-pg-embedded
 
@@ -10,14 +12,15 @@ BASEURL="http://get.enterprisedb.com/postgresql"
 TAR=tar
 test -x /usr/local/bin/gtar && TAR=/usr/local/bin/gtar
 
-$TAR --version | grep -q "GNU tar"
-if [ $? -ne 0  ]
+if ! $TAR --version | grep -q "GNU tar"
 then
     echo "GNU tar is required."
     echo "Hint: brew install gnu-tar"
     $TAR --version
     exit 100
 fi
+
+set -x
 
 cd $(dirname $0)
 
