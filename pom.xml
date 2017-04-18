@@ -18,7 +18,7 @@
     <inceptionYear>2014</inceptionYear>
 
     <scm>
-        <connection>scm:git:git@github.com/airlift/airbase.git</connection>
+        <connection>scm:git:git://github.com/airlift/testing-postgresql-server.git</connection>
         <url>https://github.com/airlift/testing-postgresql-server</url>
         <tag>HEAD</tag>
     </scm>
