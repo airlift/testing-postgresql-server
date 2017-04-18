@@ -21,8 +21,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 public final class TestingPostgreSqlServer
         implements Closeable
@@ -37,8 +37,8 @@ public final class TestingPostgreSqlServer
     public TestingPostgreSqlServer(String user, String database)
             throws Exception
     {
-        this.user = checkNotNull(user, "user is null");
-        this.database = checkNotNull(database, "database is null");
+        this.user = requireNonNull(user, "user is null");
+        this.database = requireNonNull(database, "database is null");
 
         server = new EmbeddedPostgreSql();
         port = server.getPort();
