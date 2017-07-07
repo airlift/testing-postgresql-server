@@ -122,8 +122,8 @@ final class EmbeddedPostgreSql
         try {
             pgStop();
         }
-        catch (Exception e) {
-            log.error("could not stop postmaster in %s" + serverDirectory.toString(), e);
+        catch (RuntimeException e) {
+            log.error(e, "could not stop postmaster in %s", serverDirectory);
             if (postmaster != null) {
                 postmaster.destroy();
             }
