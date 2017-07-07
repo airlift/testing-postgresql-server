@@ -45,7 +45,7 @@ public final class TestingPostgreSqlServer
 
         try (Connection connection = server.getPostgresDatabase()) {
             try (Statement statement = connection.createStatement()) {
-                execute(statement, format("CREATE ROLE %s WITH LOGIN", user));
+                execute(statement, format("CREATE ROLE %s WITH LOGIN SUPERUSER", user));
                 execute(statement, format("CREATE DATABASE %s OWNER %s ENCODING = 'utf8'", database, user));
             }
         }
