@@ -44,8 +44,8 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.StandardSystemProperty.OS_ARCH;
 import static com.google.common.base.StandardSystemProperty.OS_NAME;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.io.MoreFiles.deleteRecursively;
 import static io.airlift.concurrent.Threads.daemonThreadsNamed;
-import static io.airlift.testing.FileUtils.deleteRecursively;
 import static java.lang.String.format;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Files.createTempDirectory;
@@ -129,7 +129,12 @@ final class EmbeddedPostgreSql
             }
         }
 
-        deleteRecursively(serverDirectory.toAbsolutePath().toFile());
+        try {
+            deleteRecursively(serverDirectory);
+        }
+        catch (IOException e) {
+            log.warn("failed to delete directory %s", serverDirectory);
+        }
 
         executor.shutdownNow();
     }
