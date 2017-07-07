@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -227,9 +228,18 @@ final class EmbeddedPostgreSql
         throw new IOException("postmaster failed to start after " + PG_STARTUP_WAIT, lastCause);
     }
 
+    @SuppressWarnings("EmptyTryBlock")
     private void checkReady()
             throws SQLException
     {
+        // the PostgreSQL JDBC driver logs every connect failure, so check the port first
+        try (Socket ignored = new Socket("localhost", port)) {
+            // connect succeeded
+        }
+        catch (IOException e) {
+            throw new SQLException(e);
+        }
+
         try (Connection connection = getPostgresDatabase();
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery("SELECT 42")) {
