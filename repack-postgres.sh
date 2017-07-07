@@ -6,7 +6,7 @@ set -eu
 
 # https://www.enterprisedb.com/products-services-training/pgbindownload
 
-VERSION=9.6.1-1
+VERSION=9.6.3-1
 BASEURL="https://get.enterprisedb.com/postgresql"
 
 TAR=tar

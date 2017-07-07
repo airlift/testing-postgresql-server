@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>testing-postgresql-server</artifactId>
-    <version>9.6.1-2-SNAPSHOT</version>
+    <version>9.6.3-1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>testing-postgresql-server</name>
