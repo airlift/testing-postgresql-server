@@ -14,6 +14,7 @@
 package io.airlift.testing.postgresql;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteStreams;
 import io.airlift.command.Command;
 import io.airlift.command.CommandFailedException;
 import io.airlift.log.Logger;
@@ -188,10 +189,11 @@ final class EmbeddedPostgreSql
 
         Process process = new ProcessBuilder(args)
                 .redirectErrorStream(true)
-                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                 .start();
 
         log.info("postmaster started on port %s. Waiting up to %s for startup to finish.", port, PG_STARTUP_WAIT);
+
+        startOutputProcessor(process.getInputStream());
 
         waitForServerStartup(process);
 
@@ -276,6 +278,17 @@ final class EmbeddedPostgreSql
     private String pgBin(String binaryName)
     {
         return serverDirectory.resolve("bin").resolve(binaryName).toString();
+    }
+
+    private void startOutputProcessor(InputStream in)
+    {
+        executor.execute(() -> {
+            try {
+                ByteStreams.copy(in, System.out);
+            }
+            catch (IOException ignored) {
+            }
+        });
     }
 
     private String system(String... command)
