@@ -10,7 +10,7 @@ VERSION=9.6.3-1
 BASEURL="https://get.enterprisedb.com/postgresql"
 
 TAR=tar
-test -x /usr/local/bin/gtar && TAR=/usr/local/bin/gtar
+command -v gtar > /dev/null && TAR=gtar
 
 if ! $TAR --version | grep -q "GNU tar"
 then
